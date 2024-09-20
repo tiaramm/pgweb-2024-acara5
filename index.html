@@ -186,6 +186,11 @@
                     },
                 });
             },
+
+            // Filter
+            filter: function (feature, layer) {
+                return feature.properties.KELAS == 'Tinggi' && feature.properties.JML_PDDK_1 > 10000;
+            },
         });
 
         $.getJSON("data/jumlah_penduduk.geojson", function (data) {
