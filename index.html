@@ -28,13 +28,34 @@
         var map = L.map("map").setView([-1.1973623, 116.6395662], 10);
 
         // Tile Layer Base Map
-        var basemap = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        var osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             attribution:
                 '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            }
+        );
+
+        var Esri_WorldImagery = L.tileLayer(
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+            {
+                attribution:
+                    "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+            }
+        );
+
+        var rupabumiindonesia = L.tileLayer(
+            "https://geoservices.big.go.id/rbi/rest/services/BASEMAP/Rupabumi_Indonesia/MapServer/tile/{z}/{y}/{x}",
+            {
+                attribution: "Badan Informasi Geospasial",
+            }
+        );
+
+        var OpenTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            maxZoom: 17,
+            attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
         });
 
         // Menambahkan basemap ke dalam peta
-        basemap.addTo(map);
+        OpenTopoMap.addTo(map);
 
         // GeoJSON Point Sarana Prasarana
         var sarana_prasarana = L.geoJSON(null, {
@@ -74,7 +95,7 @@
 
         $.getJSON("data/sapras.geojson", function (data) {
             sarana_prasarana.addData(data); // Menambahkan data ke dalam GeoJSON Point Sarana Prasarana
-            map.addLayer(sarana_prasarana); // Menambahkan GeoJSON Point Sarana Prasarana ke dalam peta
+            // map.addLayer(sarana_prasarana); // Menambahkan GeoJSON Point Sarana Prasarana ke dalam peta
             // map.fitBounds(sarana_prasarana.getBounds());
         });
 
@@ -115,7 +136,7 @@
 
         $.getJSON("data/jalan.geojson", function (data) {
             jalan.addData(data); // Menambahkan data ke dalam GeoJSON Polyline Jalan
-            map.addLayer(jalan); // Menambahkan GeoJSON Polyline Jalan ke dalam peta
+            // map.addLayer(jalan); // Menambahkan GeoJSON Polyline Jalan ke dalam peta
         });
 
         // GeoJSON Polygon Jumlah Penduduk
@@ -136,36 +157,204 @@
                 };
             },
 
+            // onEachFeature
+            onEachFeature: function (feature, layer) {
+                // variable popup content
+                var popup_content = "KECAMATAN " + feature.properties.KECAMATAN + "<br>" +
+                    feature.properties.DESA_KELUR + "<br>" +
+                    "Jumlah Penduduk: " + feature.properties.JML_PDDK_1 + " Jiwa";
+
+                layer.on({
+                    click: function (e) {
+                        jumlah_penduduk.bindPopup(popup_content);
+                    },
+                    mouseover: function (e) {
+                        jumlah_penduduk.bindTooltip(feature.properties.DESA_KELUR, {
+                            direction: "auto",
+                            sticky: true,
+                        });
+                    },
+                });
+            },
+        });
+
+        $.getJSON("data/jumlah_penduduk.geojson", function (data) {
+            jumlah_penduduk.addData(data); // Menambahkan data ke dalam GeoJSON Polygon Jumlah Penduduk
+            map.addLayer(jumlah_penduduk); // Menambahkan GeoJSON Polygon Jumlah Penduduk ke dalam peta
+        });
+
+        // Filter Jumlah Penduduk Rendah atau <= 3.000 Jiwa
+        map.createPane('paneJumlahPendudukFilterRendah');
+        map.getPane("paneJumlahPendudukFilterRendah").style.zIndex = 321;
+        var jumlah_penduduk_filter_rendah = L.geoJSON(null, {
+            pane: 'paneJumlahPendudukFilterRendah',
+
             // Style Graduated
-            // style: function (feature) {
-            //     if (feature.properties.JML_PDDK_1 <= 2591) {
-            //         return {
-            //             opacity: 1,
-            //             color: 'black',
-            //             weight: 1.0,
-            //             fillOpacity: 0.7,
-            //             fillColor: '#deebf7'
-            //         }
-            //     }
-            //     if (feature.properties.JML_PDDK_1 > 2591 && feature.properties.JML_PDDK_1 <= 6781) {
-            //         return {
-            //             opacity: 1,
-            //             color: 'black',
-            //             weight: 1.0,
-            //             fillOpacity: 0.7,
-            //             fillColor: '#9ecae1'
-            //         }
-            //     }
-            //     if (feature.properties.JML_PDDK_1 > 6781) {
-            //         return {
-            //             opacity: 1,
-            //             color: 'black',
-            //             weight: 1.0,
-            //             fillOpacity: 0.7,
-            //             fillColor: '#3182bd'
-            //         }
-            //     }
-            // },
+            style: function (feature) {
+                if (feature.properties.JML_PDDK_1 <= 2591) {
+                    return {
+                        opacity: 1,
+                        color: 'black',
+                        weight: 1.0,
+                        fillOpacity: 0.7,
+                        fillColor: '#deebf7'
+                    }
+                }
+                if (feature.properties.JML_PDDK_1 > 2591 && feature.properties.JML_PDDK_1 <= 6781) {
+                    return {
+                        opacity: 1,
+                        color: 'black',
+                        weight: 1.0,
+                        fillOpacity: 0.7,
+                        fillColor: '#9ecae1'
+                    }
+                }
+                if (feature.properties.JML_PDDK_1 > 6781) {
+                    return {
+                        opacity: 1,
+                        color: 'black',
+                        weight: 1.0,
+                        fillOpacity: 0.7,
+                        fillColor: '#3182bd'
+                    }
+                }
+            },
+
+            // onEachFeature
+            onEachFeature: function (feature, layer) {
+                // variable popup content
+                var popup_content = "KECAMATAN " + feature.properties.KECAMATAN + "<br>" +
+                    feature.properties.DESA_KELUR + "<br>" +
+                    "Jumlah Penduduk: " + feature.properties.JML_PDDK_1 + " Jiwa";
+
+                layer.on({
+                    click: function (e) {
+                        jumlah_penduduk.bindPopup(popup_content);
+                    },
+                    mouseover: function (e) {
+                        jumlah_penduduk.bindTooltip(feature.properties.DESA_KELUR, {
+                            direction: "auto",
+                            sticky: true,
+                        });
+                    },
+                });
+            },
+
+            // Filter
+            filter: function (feature, layer) {
+                return feature.properties.KELAS == 'Rendah' || feature.properties.JML_PDDK_1 <= 3000;
+            },
+        });
+
+        $.getJSON("data/jumlah_penduduk.geojson", function (data) {
+            jumlah_penduduk_filter_rendah.addData(data); // Menambahkan data ke dalam GeoJSON Polygon Jumlah Penduduk
+            // map.addLayer(jumlah_penduduk_filter_rendah); // Menambahkan GeoJSON Polygon Jumlah Penduduk ke dalam peta
+        });
+
+        // Filter Jumlah Penduduk Sedang
+        map.createPane('paneJumlahPendudukFilterSedang');
+        map.getPane("paneJumlahPendudukFilterSedang").style.zIndex = 351;
+        var jumlah_penduduk_filter_sedang = L.geoJSON(null, {
+            pane: 'paneJumlahPendudukFilterSedang',
+
+            // Style Graduated
+            style: function (feature) {
+                if (feature.properties.JML_PDDK_1 <= 2591) {
+                    return {
+                        opacity: 1,
+                        color: 'black',
+                        weight: 1.0,
+                        fillOpacity: 0.7,
+                        fillColor: '#deebf7'
+                    }
+                }
+                if (feature.properties.JML_PDDK_1 > 2591 && feature.properties.JML_PDDK_1 <= 6781) {
+                    return {
+                        opacity: 1,
+                        color: 'black',
+                        weight: 1.0,
+                        fillOpacity: 0.7,
+                        fillColor: '#9ecae1'
+                    }
+                }
+                if (feature.properties.JML_PDDK_1 > 6781) {
+                    return {
+                        opacity: 1,
+                        color: 'black',
+                        weight: 1.0,
+                        fillOpacity: 0.7,
+                        fillColor: '#3182bd'
+                    }
+                }
+            },
+
+            // onEachFeature
+            onEachFeature: function (feature, layer) {
+                // variable popup content
+                var popup_content = "KECAMATAN " + feature.properties.KECAMATAN + "<br>" +
+                    feature.properties.DESA_KELUR + "<br>" +
+                    "Jumlah Penduduk: " + feature.properties.JML_PDDK_1 + " Jiwa";
+
+                layer.on({
+                    click: function (e) {
+                        jumlah_penduduk.bindPopup(popup_content);
+                    },
+                    mouseover: function (e) {
+                        jumlah_penduduk.bindTooltip(feature.properties.DESA_KELUR, {
+                            direction: "auto",
+                            sticky: true,
+                        });
+                    },
+                });
+            },
+
+            // Filter
+            filter: function (feature, layer) {
+                return feature.properties.KELAS == 'Sedang';
+            },
+        });
+
+        $.getJSON("data/jumlah_penduduk.geojson", function (data) {
+            jumlah_penduduk_filter_sedang.addData(data); // Menambahkan data ke dalam GeoJSON Polygon Jumlah Penduduk
+            // map.addLayer(jumlah_penduduk_filter_sedang); // Menambahkan GeoJSON Polygon Jumlah Penduduk ke dalam peta
+        });
+
+        // Filter Jumlah Penduduk Tinggi dan > 10.000 Jiwa
+        map.createPane('paneJumlahPendudukFilterTinggi');
+        map.getPane("paneJumlahPendudukFilterTinggi").style.zIndex = 381;
+        var jumlah_penduduk_filter_tinggi = L.geoJSON(null, {
+            pane: 'paneJumlahPendudukFilterTinggi',
+
+            // Style Graduated
+            style: function (feature) {
+                if (feature.properties.JML_PDDK_1 <= 2591) {
+                    return {
+                        opacity: 1,
+                        color: 'black',
+                        weight: 1.0,
+                        fillOpacity: 0.7,
+                        fillColor: '#deebf7'
+                    }
+                }
+                if (feature.properties.JML_PDDK_1 > 2591 && feature.properties.JML_PDDK_1 <= 6781) {
+                    return {
+                        opacity: 1,
+                        color: 'black',
+                        weight: 1.0,
+                        fillOpacity: 0.7,
+                        fillColor: '#9ecae1'
+                    }
+                }
+                if (feature.properties.JML_PDDK_1 > 6781) {
+                    return {
+                        opacity: 1,
+                        color: 'black',
+                        weight: 1.0,
+                        fillOpacity: 0.7,
+                        fillColor: '#3182bd'
+                    }
+                }
+            },
 
             // onEachFeature
             onEachFeature: function (feature, layer) {
@@ -194,23 +383,38 @@
         });
 
         $.getJSON("data/jumlah_penduduk.geojson", function (data) {
-            jumlah_penduduk.addData(data); // Menambahkan data ke dalam GeoJSON Polygon Jumlah Penduduk
-            map.addLayer(jumlah_penduduk); // Menambahkan GeoJSON Polygon Jumlah Penduduk ke dalam peta
+            jumlah_penduduk_filter_tinggi.addData(data); // Menambahkan data ke dalam GeoJSON Polygon Jumlah Penduduk
+            // map.addLayer(jumlah_penduduk_filter_tinggi); // Menambahkan GeoJSON Polygon Jumlah Penduduk ke dalam peta
         });
 
         // Control Layer
         var baseMaps = {
-            "Basemap": basemap,
+            "OpenStreetMap": osm,
+            "Esri World Imagery": Esri_WorldImagery,
+            "Rupa Bumi Indonesia": rupabumiindonesia,
+            "Open Topography Map": OpenTopoMap,
         };
 
         var overlayMaps = {
             "Sarana Prasarana": sarana_prasarana,
             "Jalan": jalan,
             "Jumlah Penduduk": jumlah_penduduk,
+            "Kepadatan Penduduk Kelas Rendah atau berjumlah <= 3.000 Jiwa": jumlah_penduduk_filter_rendah,
+            "Kepadatan Penduduk Kelas Sedang": jumlah_penduduk_filter_sedang,
+            "Kepadatan Penduduk Kelas Tinggi dan berjumlah > 10.000 Jiwa": jumlah_penduduk_filter_tinggi,
         };
 
-        var controllayer = L.control.layers(baseMaps, overlayMaps);
+        var controllayer = L.control.layers(baseMaps, overlayMaps, {
+            collapsed: false
+        });
         controllayer.addTo(map);
+
+        // Scale
+        var scale = L.control.scale({
+            position: "bottomright",
+            imperial: false,
+        });
+        scale.addTo(map);
     </script>
 </body>
 
