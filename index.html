@@ -176,9 +176,9 @@
                 //     "Koordinat: " + feature.geometry.coordinates[1] + ", " + feature.geometry.coordinates[0];
 
                 // variable popup content (table)
-                var popup_content = 
-                "<table class='table table-striped table-bordered'>" + "<tr><th>Nama</th><td>" + feature.properties.SARANA_PRA + "</td></tr>" + 
-                "<tr><th>Koordinat (Latitude, Longitude)</th><td>" + feature.geometry.coordinates[1] + ", " + feature.geometry.coordinates[0] + "</td></tr>";
+                var popup_content =
+                    "<table class='table table-striped table-bordered'>" + "<tr><th>Nama</th><td>" + feature.properties.SARANA_PRA + "</td></tr>" +
+                    "<tr><th>Koordinat (Latitude, Longitude)</th><td>" + feature.geometry.coordinates[1] + ", " + feature.geometry.coordinates[0] + "</td></tr>";
 
                 layer.on({
                     click: function (e) {
@@ -227,9 +227,9 @@
                 //     "Panjang (m): " + feature.properties.Panjang_m;
 
                 // variable popup content (table)
-                var popup_content = 
-                "<table class='table table-striped table-bordered'>" + "<tr><th>Fungsi</th><td>" + feature.properties.FUNGSI_JAL + "</td></tr>" + 
-                "<tr><th>Panjang</th><td>" + feature.properties.Panjang_m + " meter</td></tr>";
+                var popup_content =
+                    "<table class='table table-striped table-bordered'>" + "<tr><th>Fungsi</th><td>" + feature.properties.FUNGSI_JAL + "</td></tr>" +
+                    "<tr><th>Panjang</th><td>" + feature.properties.Panjang_m + " meter</td></tr>";
 
                 layer.on({
                     click: function (e) {
@@ -280,11 +280,18 @@
                 //     feature.properties.DESA_KELUR + "<br>" +
                 //     "Jumlah Penduduk: " + feature.properties.JML_PDDK_1 + " Jiwa";
 
-                 // variable popup content (table)
-                var popup_content = 
-                "<table class='table table-striped table-bordered'>" + "<tr><th>Kecamatan</th><td>" + feature.properties.KECAMATAN + "</td></tr>" + 
-                "<tr><th>Kelurahan/Desa</th><td>" + feature.properties.DESA_KELUR + "</td></tr>" +
-                "<tr><th>Jumlah Penduduk</th><td>" + feature.properties.JML_PDDK_1 + " Jiwa</td></tr>";
+                // variable popup content (table)
+                var Lowkecamatan = feature.properties.KECAMATAN.toLowerCase()
+                // function toTitleCase(Lowkecamatan) {
+                //     return Lowkecamatan.replace(
+                //         kecamatan => Lowkecamatan.charAt(0).toUpperCase() + Lowkecamatan.substring(1).toLowerCase()
+                //     );
+                // }
+
+                var popup_content =
+                    "<table class='table table-striped table-bordered'>" + "<tr><th>Kecamatan</th><td>" + Lowkecamatan.charAt(0).toUpperCase() + Lowkecamatan.substring(1).toLowerCase() + "</td></tr>" +
+                    "<tr><th>Kelurahan/Desa</th><td>" + feature.properties.DESA_KELUR + "</td></tr>" +
+                    "<tr><th>Jumlah Penduduk</th><td>" + feature.properties.JML_PDDK_1 + " Jiwa</td></tr>";
 
                 layer.on({
                     click: function (e) {
@@ -355,10 +362,17 @@
                 //     "Jumlah Penduduk: " + feature.properties.JML_PDDK_1 + " Jiwa";
 
                 // variable popup content (table)
-                var popup_content = 
-                "<table class='table table-striped table-bordered'>" + "<tr><th>Kecamatan</th><td>" + feature.properties.KECAMATAN + "</td></tr>" + 
-                "<tr><th>Kelurahan/Desa</th><td>" + feature.properties.DESA_KELUR + "</td></tr>" +
-                "<tr><th>Jumlah Penduduk</th><td>" + feature.properties.JML_PDDK_1 + " Jiwa</td></tr>";
+                var Lowkecamatan = feature.properties.KECAMATAN.toLowerCase()
+                // function toTitleCase(Lowkecamatan) {
+                //     return Lowkecamatan.replace(
+                //         kecamatan => Lowkecamatan.charAt(0).toUpperCase() + Lowkecamatan.substring(1).toLowerCase()
+                //     );
+                // }
+
+                var popup_content =
+                    "<table class='table table-striped table-bordered'>" + "<tr><th>Kecamatan</th><td>" + Lowkecamatan.charAt(0).toUpperCase() + Lowkecamatan.substring(1).toLowerCase() + "</td></tr>" +
+                    "<tr><th>Kelurahan/Desa</th><td>" + feature.properties.DESA_KELUR + "</td></tr>" +
+                    "<tr><th>Jumlah Penduduk</th><td>" + feature.properties.JML_PDDK_1 + " Jiwa</td></tr>";
 
                 layer.on({
                     click: function (e) {
@@ -434,10 +448,17 @@
                 //     "Jumlah Penduduk: " + feature.properties.JML_PDDK_1 + " Jiwa";
 
                 // variable popup content (table)
-                var popup_content = 
-                "<table class='table table-striped table-bordered'>" + "<tr><th>Kecamatan</th><td>" + feature.properties.KECAMATAN + "</td></tr>" + 
-                "<tr><th>Kelurahan/Desa</th><td>" + feature.properties.DESA_KELUR + "</td></tr>" +
-                "<tr><th>Jumlah Penduduk</th><td>" + feature.properties.JML_PDDK_1 + " Jiwa</td></tr>";
+                var Lowkecamatan = feature.properties.KECAMATAN.toLowerCase()
+                // function toTitleCase(Lowkecamatan) {
+                //     return Lowkecamatan.replace(
+                //         kecamatan => Lowkecamatan.charAt(0).toUpperCase() + Lowkecamatan.substring(1).toLowerCase()
+                //     );
+                // }
+
+                var popup_content =
+                    "<table class='table table-striped table-bordered'>" + "<tr><th>Kecamatan</th><td>" + Lowkecamatan.charAt(0).toUpperCase() + Lowkecamatan.substring(1).toLowerCase() + "</td></tr>" +
+                    "<tr><th>Kelurahan/Desa</th><td>" + feature.properties.DESA_KELUR + "</td></tr>" +
+                    "<tr><th>Jumlah Penduduk</th><td>" + feature.properties.JML_PDDK_1 + " Jiwa</td></tr>";
 
                 layer.on({
                     click: function (e) {
@@ -513,10 +534,17 @@
                 //     "Jumlah Penduduk: " + feature.properties.JML_PDDK_1 + " Jiwa";
 
                 // variable popup content (table)
-                var popup_content = 
-                "<table class='table table-striped table-bordered'>" + "<tr><th>Kecamatan</th><td>" + feature.properties.KECAMATAN + "</td></tr>" + 
-                "<tr><th>Kelurahan/Desa</th><td>" + feature.properties.DESA_KELUR + "</td></tr>" +
-                "<tr><th>Jumlah Penduduk</th><td>" + feature.properties.JML_PDDK_1 + " Jiwa</td></tr>";
+                var Lowkecamatan = feature.properties.KECAMATAN.toLowerCase()
+                // function toTitleCase(Lowkecamatan) {
+                //     return Lowkecamatan.replace(
+                //         kecamatan => Lowkecamatan.charAt(0).toUpperCase() + Lowkecamatan.substring(1).toLowerCase()
+                //     );
+                // }
+
+                var popup_content =
+                    "<table class='table table-striped table-bordered'>" + "<tr><th>Kecamatan</th><td>" + Lowkecamatan.charAt(0).toUpperCase() + Lowkecamatan.substring(1).toLowerCase() + "</td></tr>" +
+                    "<tr><th>Kelurahan/Desa</th><td>" + feature.properties.DESA_KELUR + "</td></tr>" +
+                    "<tr><th>Jumlah Penduduk</th><td>" + feature.properties.JML_PDDK_1 + " Jiwa</td></tr>";
 
                 layer.on({
                     click: function (e) {
